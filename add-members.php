@@ -1,7 +1,4 @@
-
 <?php
-if(isset($_POST["submit"]))
-{
 $servername = "localhost";
 $username = "rbiobk_UserDB";
 $password = "ERICpass.2";
@@ -26,13 +23,10 @@ if ($conn->connect_error) {
 die("Connection failed: " . $conn->connect_error);
 }
 $sql = "INSERT INTO tblmembers (firstname,surname,email,phonenumber,address,citystate,zipcode)
-VALUES ('$firstname','$surname','$email','$phonenumber','$citystate','$zipcode')”;
+VALUES ($firstname,$surname,$email,$phonenumber,$citystate,$zipcode)";
 
-if ($conn->query($sql) === TRUE) 
-{
-echo "<script type= 'text/javascript'>alert('New record created successfully');</script>";
-} 
-$conn->close();
+if ($conn->query($sql) === true) {
+    header('Location: alert.html');
 }
 
-?>
+$conn->close();
