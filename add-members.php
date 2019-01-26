@@ -1,9 +1,15 @@
 <?php
 $servername = "localhost";
-$username = "rbiobk_UserDB";
-$password = "ERICpass.2";
-$dbname = "rbiobk_db25";
+$username = "riobk_UserDB";
+$passworddb = "ERICpass.2";
+$dbname = "riobk_db25";
 
+
+// File upload path
+$targetDir = "uploads/";
+$fileName = basename($_FILES["file"]["name"]);
+$targetFilePath = $targetDir . $fileName;
+$fileType = pathinfo($targetFilePath,PATHINFO_EXTENSION);
 
 //declear what to pick
 
@@ -14,19 +20,23 @@ $phonenumber= $_POST['phonenumber'];
 $citystate= $_POST['citystate'];
 $zipcode= $_POST['zipcode'];
 
+$file_name= $_POST['file'];
 
 
 // Create connection
-$conn = mysql_connect($servername, $username, $password, $dbname);
-// Check connection
-if ($conn->connect_error) {
-die("Connection failed: " . $conn->connect_error);
-}
-$sql = "INSERT INTO tblmembers (firstname,surname,email,phonenumber,address,citystate,zipcode)
-VALUES ($firstname,$surname,$email,$phonenumber,$citystate,$zipcode)";
+$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $passworddb);
+    // set the PDO error mode to exception
 
-if ($conn->query($sql) === true) {
-    header('Location: alert.html');
+  // Allow certain file formats
+  $allowTypes = array('jpg','png','jpeg','gif','pdf');
+  if(in_array($fileType, $allowTypes)){
+      // Upload file to server
+      if(move_uploaded_file($_FILES["file"]["tmp_name"], $targetFilePath)){
+$sql = "INSERT INTO tblmembers (firstname,surname,email,phonenumber,address,citystate,zipcode,file_name)
+VALUES ($firstname,$surname,$email,$phonenumber,$citystate,$zipcode,$file)";
+      $conn->exec($sql);
+    }
+  header('Location: profile.php');
 }
 
-$conn->close();
+?>
