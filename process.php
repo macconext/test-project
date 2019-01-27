@@ -1,27 +1,28 @@
-<?php  
+<?php
+require('connect.php');
 session_start();
 // Connect to server and select databse.
- mysqli_connect("localhost","UserDB","password","db25");
-
-// Check connection
 
 if (isset($_POST['login'])){
-  
-    $userid = $_POST['username'];
-    $userpass = $_POST['password'];
+    // removes backslashes
+$username = stripslashes($_REQUEST['username']);
+    //escapes special characters in a string
+$username = mysqli_real_escape_string($con,$username);
+$password = stripslashes($_REQUEST['password']);
+$password = mysqli_real_escape_string($con,$password);
+    //3.1.2 Checking the values are existing in the database or not
+$query = "SELECT * FROM 'tbladmin' WHERE username='$username' and password='$password'";
 
-    $query = "SELECT * FROM tbladmin WHERE username='$userid' and password='$userpass'";
+$result = mysqli_query($con,$query) or die(mysql_error());
+$rows = mysqli_num_rows($result);
+if($rows==1){
 
-    $result = mysqli_query($connection, $query) or die(mysqli_error($connection));
-    $count = mysqli_num_rows($result);
-   
-    if ($count == 1){
-    $_SESSION['username'] = $userid;
-
+$_SESSION['username'] = $username;
+// Check username and password match
  header('Location: index-profile.php');
 }
 else {
-
+    // Jump to login page
     header('Location: index.php');
     }
 }
